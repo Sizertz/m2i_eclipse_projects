@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Test {
 	static final String url = "jdbc:mysql://localhost:3306/DP_Formation?serverTimezone=UTC";
@@ -14,90 +16,69 @@ public class Test {
 
 	public static void main(String[] args) {
 
-		Personne p1 = new Personne(1, "Abelard", "Simon", 54.7f, 1.75f, Genre.MASCULIN);
+		Personne p1 = new Personne(1, "Abelard", "Simon", 54.7f, 1.75f, Genre.MASCULIN, 1);
 //		System.out.println(p1);
 
+		// Testing retrieve
 		DAOPersonne personneDAO = new DAOPersonne();
 		System.out.println("retrieve(1):" + personneDAO.retrieve(1));
 
-		Personne p2 = new Personne(1, "Balmes", "Antoine", 54.7f, 1.75f, Genre.MASCULIN);
+		// Testing update
+		Personne p2 = new Personne(1, "Balmes", "Antoine", 54.7f, 1.75f, Genre.MASCULIN, 1);
 		System.out.println(personneDAO.update(p2));
 		System.out.println("\nretrieve(1) après édition:" + personneDAO.retrieve(1));
 
+		// Testing delete
 		System.out.println("\ndelete(1): " + personneDAO.delete(1));
 		System.out.println("Etat de la BDD après suppression:");
-		printTablePersonne();
+		personneDAO.printTable();
 
+		// Testing create
 		System.out.println("\ncreate(): " + personneDAO.create(p1));
 		System.out.println("Etat de la BDD après création:");
-		printTablePersonne();
+		personneDAO.printTable();
 
+		// Testing retrieveAll
 		System.out.println("\nretrieveAll() : ");
 		System.out.println(personneDAO.retrieveAll());
 
-	}
+		// Testing getNextValidID
+		Personne p3 = new Personne(personneDAO.getNextValidId(), "Abelard", "Simon", 54.7f, 1.75f, Genre.MASCULIN, 1);
+		personneDAO.create(p3);
 
-	/**
-	 * Prints the current entry in a result set
-	 * 
-	 * @param rs
-	 * @throws SQLException
-	 */
-	public static void printCurrentEntry(ResultSet rs) throws SQLException {
-		for (int i = 1; i <= rs.getMetaData().getColumnCount(); i++) {
-			System.out.print(rs.getObject(i) + " | ");
-		}
-		System.out.print("\n");
-	}
+		// ----------------------------------------------------------
+		// Test de societe
+		System.out.println("----------------------------------------------------------");
+		System.out.println("Test de SocieteDAO");
 
-	/**
-	 * Prints an entire result set
-	 * 
-	 * @param rs
-	 * @throws SQLException
-	 */
-	public static void printResultSet(ResultSet rs) throws SQLException {
-		for (int i = 1; i <= rs.getMetaData().getColumnCount(); i++) {
-			System.out.print(rs.getMetaData().getColumnName(i) + " | ");
-		}
-		System.out.print("\n");
-		while (rs.next()) {
-			printCurrentEntry(rs);
-		}
-	}
+		// Testing societe retrieve
+		DAOSociete societeDAO = new DAOSociete();
+		System.out.println("\nretrieve(1):" + societeDAO.retrieve(1));
 
-	/**
-	 * Prints the table "Personne"
-	 * 
-	 * @throws SQLException
-	 */
-	public static void printTablePersonne() {
-		String sql = "SELECT * FROM Personne";
-		PreparedStatement st;
-		try {
-			st = cnn.prepareStatement(sql);
-			printResultSet(st.executeQuery());
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+		// Testing update
+		Societe s2 = new Societe(1, "BNP Paribas", 54.7f, "Banque et assurance", new ArrayList<Personne>());
+		System.out.println(societeDAO.update(s2));
+		System.out.println("\nretrieve(1) après édition:" + societeDAO.retrieve(1));
 
-	/**
-	 * Returns the next valid ID for inserting into the "Personne" table
-	 * 
-	 * @return
-	 * @throws SQLException
-	 */
-	public static synchronized int getNextValidIdPersonne() throws SQLException {
-		String sql = "SELECT MAX(ID_Personne) FROM Personne";
-		PreparedStatement st = cnn.prepareStatement(sql);
-		ResultSet rs = st.executeQuery();
-		if (rs.next()) {
-			return rs.getInt(1) + 1;
-		} else {
-			throw new SQLException("Query failed:" + st);
-		}
+		// Testing delete
+		System.out.println("\ndelete(1): " + societeDAO.delete(1));
+		System.out.println("Etat de la BDD après suppression:");
+		societeDAO.printTable();
+
+		// Testing create
+		Societe s1 = new Societe(1, "BNP", 10000000f, "Banque", new ArrayList<Personne>());
+		System.out.println("\ncreate(): " + societeDAO.create(s1));
+		System.out.println("Etat de la BDD après création:");
+		societeDAO.printTable();
+
+		// Testing retrieveAll
+		System.out.println("\nretrieveAll() : ");
+		System.out.println(societeDAO.retrieveAll());
+
+		// Testing getNextValidID
+		Societe s3 = new Societe(societeDAO.getNextValidId(), "M2I Formation", 540000.7f, "Organisme de formation",
+				new ArrayList<Personne>());
+		societeDAO.create(s3);
 	}
 
 }

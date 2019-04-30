@@ -7,9 +7,11 @@ public class Personne {
 	private float _Poids;
 	private float _Taille;
 	private Genre _Sexe;
+	private int _ID_Societe;
 
 	// Constructor
-	public Personne(int _ID_Personne, String _Nom, String _Prenom, float _Poids, float _Taille, Genre _Sexe) {
+	public Personne(int _ID_Personne, String _Nom, String _Prenom, float _Poids, float _Taille, Genre _Sexe,
+			int _ID_Societe) {
 		super();
 		this._ID_Personne = _ID_Personne;
 		this._Nom = _Nom;
@@ -17,9 +19,19 @@ public class Personne {
 		this._Poids = _Poids;
 		this._Taille = _Taille;
 		this._Sexe = _Sexe;
+		this._ID_Societe = _ID_Societe;
 	}
 
+
 	// Getters and setters
+	public int get_ID_Societe() {
+		return _ID_Societe;
+	}
+	
+	public void set_ID_Societe(int _ID_Societe) {
+		this._ID_Societe = _ID_Societe;
+	}
+	
 	public int get_ID_Personne() {
 		return _ID_Personne;
 	}
@@ -108,34 +120,42 @@ public class Personne {
 		return "Obèse morbide";
 	}
 
+
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("ID=");
+		builder.append("Personne [_ID_Personne=");
 		builder.append(_ID_Personne);
-		builder.append(" | Nom=");
+		builder.append(", _Nom=");
 		builder.append(_Nom);
-		builder.append(" | Prenom=");
+		builder.append(", _Prenom=");
 		builder.append(_Prenom);
-		builder.append(" | Poids=");
+		builder.append(", _Poids=");
 		builder.append(_Poids);
-		builder.append(" | Taille=");
+		builder.append(", _Taille=");
 		builder.append(_Taille);
-		builder.append(" | Sexe=");
+		builder.append(", _Sexe=");
 		builder.append(_Sexe);
-		builder.append(" | IMC=");
+		builder.append(", _ID_Societe=");
+		builder.append(_ID_Societe);
+		builder.append(", iMC()=");
 		builder.append(iMC());
-		builder.append(" | poids min=");
+		builder.append(", poidsMin()=");
 		builder.append(poidsMin());
-		builder.append(" | poids max=");
+		builder.append(", poidsMax()=");
 		builder.append(poidsMax());
-		builder.append(" | poids ideal=");
+		builder.append(", poidsIdeal()=");
 		builder.append(poidsIdeal());
-		builder.append(" | diagnostic=");
+		builder.append(", diagnostic()=");
 		builder.append(diagnostic());
-		builder.append("");
+		builder.append("]");
 		return builder.toString();
 	}
-	
-	
+
+
+	public static String nom() {
+		return "Personne";
+	}
+
 }

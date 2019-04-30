@@ -15,7 +15,7 @@ public class DAOPersonne implements IDAO<Personne> {
 
 	@Override
 	public int create(Personne obj) {
-		String query = "INSERT INTO Personne VALUES (?,?,?,?,?,?)";
+		String query = "INSERT INTO Personne VALUES (?,?,?,?,?,?,?)";
 		try {
 			PreparedStatement ps = _cnn.prepareStatement(query);
 			ps.setInt(1, obj.get_ID_Personne());
@@ -24,6 +24,7 @@ public class DAOPersonne implements IDAO<Personne> {
 			ps.setFloat(4, obj.get_Poids());
 			ps.setFloat(5, obj.get_Taille());
 			ps.setString(6, obj.get_Sexe().toString());
+			ps.setInt(7, obj.get_ID_Societe());
 			return ps.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -40,9 +41,10 @@ public class DAOPersonne implements IDAO<Personne> {
 			ps.setInt(1, id);
 			rs = ps.executeQuery();
 			if (rs.next()) {
-				Genre sexe = rs.getString("Sexe").equals("MASCULIN")? Genre.MASCULIN : Genre.FEMININ;
+				Genre sexe = Genre.valueOf(rs.getString("Sexe")); // rs.getString("Sexe").equals("MASCULIN")?
+																	// Genre.MASCULIN : Genre.FEMININ;
 				return new Personne(id, rs.getString("Nom"), rs.getString("Prenom"), rs.getFloat("Poids"),
-						rs.getFloat("Taille"), sexe);
+						rs.getFloat("Taille"), sexe, rs.getInt("ID_Societe"));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -61,9 +63,9 @@ public class DAOPersonne implements IDAO<Personne> {
 			PreparedStatement ps = _cnn.prepareStatement(query);
 			rs = ps.executeQuery();
 			while (rs.next()) {
-				sexe = rs.getString("Sexe").equals("MASCULIN") ? Genre.MASCULIN : Genre.FEMININ;;
+				sexe = rs.getString("Sexe").equals("MASCULIN") ? Genre.MASCULIN : Genre.FEMININ;
 				p = new Personne(rs.getInt("ID_Personne"), rs.getString("Nom"), rs.getString("Prenom"),
-						rs.getFloat("Poids"), rs.getFloat("Taille"), sexe);
+						rs.getFloat("Poids"), rs.getFloat("Taille"), sexe, rs.getInt("ID_Societe"));
 				res.add(p);
 			}
 			return res;
@@ -89,7 +91,7 @@ public class DAOPersonne implements IDAO<Personne> {
 
 	@Override
 	public int update(Personne obj) {
-		String query = "UPDATE Personne SET Nom = ?, Prenom = ?, Poids = ?, Taille = ?, Sexe = ? WHERE ID_Personne = ?";
+		String query = "UPDATE Personne SET Nom = ?, Prenom = ?, Poids = ?, Taille = ?, Sexe = ?, ID_Societe = ? WHERE ID_Personne = ?";
 		try {
 			PreparedStatement ps = _cnn.prepareStatement(query);
 			ps.setString(1, obj.get_Nom());
@@ -97,12 +99,40 @@ public class DAOPersonne implements IDAO<Personne> {
 			ps.setFloat(3, obj.get_Poids());
 			ps.setFloat(4, obj.get_Taille());
 			ps.setString(5, obj.get_Sexe().toString());
-			ps.setInt(6, obj.get_ID_Personne());
+			ps.setInt(6, obj.get_ID_Societe());
+			ps.setInt(7, obj.get_ID_Personne());
 			return ps.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return -1;
+	}
+
+	@Override
+	public void printTable() {
+		String sql = "SELECT * FROM Personne";
+		PreparedStatement st;
+		try {
+			st = _cnn.prepareStatement(sql);
+			IDAO.printResultSet(st.executeQuery());
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public synchronized int getNextValidId() {
+		String sql = "SELECT MAX(ID_Personne) FROM Personne";
+		try {
+			PreparedStatement st = _cnn.prepareStatement(sql);
+			ResultSet rs = st.executeQuery();
+			if (rs.next()) {
+				return rs.getInt(1) + 1;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return 1;
 	}
 
 }
