@@ -74,8 +74,14 @@ public class Societe {
 		builder.append("]");
 		return builder.toString();
 	}
+	
+	public String lstEmployesToString() {
+		StringBuilder builder = new StringBuilder();
+		return builder.toString();
+	}
 
 	public void addEmploye(Personne p) {
+		p.set_ID_Societe(this._ID_Societe);
 		this.lstEmployes.add(p);
 	}
 

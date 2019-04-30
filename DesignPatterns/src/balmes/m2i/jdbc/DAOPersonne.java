@@ -8,13 +8,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DAOPersonne implements IDAO<Personne> {
-	private static final String url = "jdbc:mysql://localhost:3306/DP_Formation?serverTimezone=UTC";
+	private static final String url = "jdbc:mysql://localhost:3306/DP_Formation_Simon?serverTimezone=UTC";
 	private static final String user = "root";
 	private static final String pwd = "";
 	private static Connection _cnn = SingleConnection.getInstance(url, user, pwd);
 
 	@Override
 	public int create(Personne obj) {
+		// make sure that obj has a valid ID by switching it with getNextValidId if necessary
+		int minId = getNextValidId();
+		obj.set_ID_Personne(Math.max(minId, obj.get_ID_Personne()));
+		
+		// insert
 		String query = "INSERT INTO Personne VALUES (?,?,?,?,?,?,?)";
 		try {
 			PreparedStatement ps = _cnn.prepareStatement(query);
