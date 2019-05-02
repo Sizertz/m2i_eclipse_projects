@@ -155,8 +155,17 @@ public class DAO_Eleve implements IDAO<Eleve> {
 
 	@Override
 	public int getNextValidId() {
-		// TODO Auto-generated method stub
-		return 0;
+		String sql = "SELECT MAX(ID_Eleve) FROM Eleve";
+		try {
+			PreparedStatement st = _cnn.prepareStatement(sql);
+			ResultSet rs = st.executeQuery();
+			if (rs.next()) {
+				return rs.getInt(1) + 1;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return 1;
 	}
 
 	@Override

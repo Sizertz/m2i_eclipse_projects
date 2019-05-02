@@ -25,7 +25,7 @@ public class DAO_Note implements IDAO<Note> {
 			ps.setFloat(2, obj.getValeur());
 			ps.setString(3, obj.getMatiere().name());
 			ps.setInt(4, obj.getID_Eleve());
-			ps.setObject(5, obj.getDate());
+			ps.setObject(5, obj.getDate().plusDays(1)); // watch out: sql Dates remove a day
 
 			return ps.executeUpdate();
 		} catch (SQLException e) {
